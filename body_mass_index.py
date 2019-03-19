@@ -1,60 +1,65 @@
-class BMI:
+class BodyMassIndex:
 
-    def __init__(self, firstName, lastName, age, height, weight):
-        self.firstName = firstName
-        self.lastName = lastName
-        self.fullName = firstName + " " + lastName
-        self.age = age
-        self.height = (height * 0.025) ** 2
-        self.weight = weight * 0.45
+    BMI_STATUS_LOSE = 0
+    BMI_STATUS_HEALTHY = 1
+    BMI_STATUS_GAIN = 2
 
-    def setFullName(self, firstName, lastName):
-        self.firstName = firstName
-        self.lastName = lastName
-        self.fullName = firstName + " " + lastName
+    def __init__(self, first_name, last_name, age, height, weight):
+        self._first_name = first_name
+        self._last_name = last_name
+        self._age = age
+        self._height = height
+        self._weight = weight
 
-        print(self.fullName)
+    def get_full_name(self):
+        return self._first_name + " " + self._last_name
 
-    def setAge(self, age):
-        self.age = age
+    def get_bmi(self):
+        return (self._weight * 703) / self._height ** 2
 
-    def setHeight(self, height):
-        self.height = (height * 0.025) ** 2
-
-    def setWeight(self, weight):
-        self.weight = weight * 0.45
-
-    def getBMI(self):
-        bmi = self.weight // self.height
-        return bmi
-
-    def getStatus(self):
-
-        getBMI()
-
-        if bmi < 19:
-            print("You have an unhealthy BMI, gain some weight!")
-        elif bmi > 19 and bmi < 25:
-            print("You have a healthy BMI")
+    def get_status(self):
+        bmi = self.get_bmi()
+        if bmi < 18.5:
+            status = BodyMassIndex.BMI_STATUS_LOSE
+        elif bmi < 25.0:
+            status = BodyMassIndex.BMI_STATUS_HEALTHY
         else:
-            print("You have an unhealthy BMI, lose some weight!")
+            status = BodyMassIndex.BMI_STATUS_GAIN
+        return status
+
+    def get_report(self):
+        a = self.get_full_name()
+        b = "Your BMI is: {0:.1f}".format(self.get_bmi())
+        status_name = ['n unhealthy BMI, lose some weight!',
+                       ' healthy BMI',
+                       'n unhealthy BMI, gain some weight!']
+        c = 'You have a' + status_name[self.get_status()]
+        return a + '\n' + b + '\n' + c
 
 
-firstName = input("Enter your first name: ")
+if __name__ == '__main__':
 
-lastName = input("Enter your last name: ")
+    def first_test():
+        user_test_list = [
+            ("Alex", "Fat",    21, 69, 170, 2),
+            ("Josh", "Smart",  17, 69, 169, 1),
+            ("Ann", "Full",    19, 69, 126, 1),
+            ("Mary", "Skinny", 19, 69, 125, 0),
+        ]
+        for first, last, age, height, weight, expected in user_test_list:
+            user = BodyMassIndex(first, last, age, height, weight)
+            print(user.get_report())
+            print()
 
-age = int(input("Enter your age: "))
+    first_test()
 
-height = int(input("Enter your height in inches: "))
-
-weight = int(input("Enter your weight in lbs: "))
-
-userInputBMI = BMI(firstName, lastName, age, height, weight)
-
-
-print(userInputBMI.setFullName(firstName, lastName))
-
-print("Your BMI is:", userInputBMI.getBMI())
-
-print(userInputBMI.getStatus())
+    while True:
+        first = input("Enter your first name: ")
+        if not first:
+            break
+        last = input("Enter your last name: ")
+        age = int(input("Enter your age: "))
+        height = int(input("Enter your height in inches: "))
+        weight = int(input("Enter your weight in lbs: "))
+        user = BodyMassIndex(first, last, age, height, weight)
+        print(user.get_report())
