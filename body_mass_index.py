@@ -1,65 +1,85 @@
-class BodyMassIndex:
+class Person:
+    BMI_UNDER = 0
+    BMI_HEALTHY = 1
+    BMI_OVER = 2
+    BMI_STATUS = ['underweight', 'healthy', 'overweight']
+    BMI_CODE = ['BMI_UNDER', 'BMI_HEALTHY', 'BMI_OVER']
 
-    BMI_STATUS_LOSE = 0
-    BMI_STATUS_HEALTHY = 1
-    BMI_STATUS_GAIN = 2
-
-    def __init__(self, first_name, last_name, age, height, weight):
-        self._first_name = first_name
-        self._last_name = last_name
-        self._age = age
+    def __init__(self, name, height, weight):
+        self._name = name
         self._height = height
         self._weight = weight
 
-    def get_full_name(self):
-        return self._first_name + " " + self._last_name
+    def get_name(self):
+        return self._name
 
     def get_bmi(self):
-        return (self._weight * 703) / self._height ** 2
+        return self._weight * 703 / self._height ** 2
 
-    def get_status(self):
+    def get_bmi_type(self):
         bmi = self.get_bmi()
         if bmi < 18.5:
-            status = BodyMassIndex.BMI_STATUS_LOSE
+            status = Person.BMI_UNDER
         elif bmi < 25.0:
-            status = BodyMassIndex.BMI_STATUS_HEALTHY
+            status = Person.BMI_HEALTHY
         else:
-            status = BodyMassIndex.BMI_STATUS_GAIN
+            status = Person.BMI_OVER
         return status
 
-    def get_report(self):
-        a = self.get_full_name()
-        b = "Your BMI is: {0:.1f}".format(self.get_bmi())
-        status_name = ['n unhealthy BMI, lose some weight!',
-                       ' healthy BMI',
-                       'n unhealthy BMI, gain some weight!']
-        c = 'You have a' + status_name[self.get_status()]
-        return a + '\n' + b + '\n' + c
+    def get_bmi_status(self):
+        return Person.BMI_STATUS[self.get_bmi_type()]
+
+    def get_bmi_code(self):
+        return Person.BMI_CODE[self.get_bmi_type()]
+
+    def get_bmi_report(self):
+        return 'BMI is %.1f %s' % (self.get_bmi(), self.get_bmi_status())
 
 
 if __name__ == '__main__':
 
     def first_test():
-        user_test_list = [
-            ("Alex", "Fat",    21, 69, 170, 2),
-            ("Josh", "Smart",  17, 69, 169, 1),
-            ("Ann", "Full",    19, 69, 126, 1),
-            ("Mary", "Skinny", 19, 69, 125, 0),
+        test_list = [
+            ('Major Fat', 69, 170, Person.BMI_OVER),
+            ('Ann Smart', 69, 169, Person.BMI_HEALTHY),
+            ('Mary Cool', 69, 126, Person.BMI_HEALTHY),
+            ('Ed Skinny', 69, 125, Person.BMI_UNDER),
         ]
-        for first, last, age, height, weight, expected in user_test_list:
-            user = BodyMassIndex(first, last, age, height, weight)
-            print(user.get_report())
-            print()
+        for name, height, weight, expected in test_list:
+            person = Person(name, height, weight)
+            print(person.get_name(), person.get_bmi_report())
+            if person.get_bmi_type() != expected:
+                print('*** ERROR expected:', Person.BMI_STATUS[expected])
+        print()
+
+    def get_integer(from_int, to_int, question):
+        while True:
+            try:
+                i = int(input(question + ': '))
+                if from_int <= i <= to_int:
+                    break
+            except ValueError:
+                pass
+            print('Enter an integer from {0} to {1}'.format(from_int, to_int))
+        return i
+
+    def interactive_test():
+        new_list = []
+        while True:
+            name = input('Enter name: ')
+            if not name:  # Exit if the name is blank ''
+                print('Thank you for testing!', end='')
+                print('' if len(new_list) == 0 else '\nThe test list to reuse:')
+                break
+            height = get_integer(22, 108, 'Enter your height in inches')
+            weight = get_integer(4, 1400, 'Enter your weight in lbs')
+            person = Person(name, height, weight)
+            print(person.get_bmi_report())
+            new_list += [(name, height, weight)]
+        for name, height, weight in new_list:
+            person = Person(name, height, weight)
+            status_name = 'Person.' + person.get_bmi_code()
+            print("('%s', %d, %d, %s)," % (name, height, weight, status_name))
 
     first_test()
-
-    while True:
-        first = input("Enter your first name: ")
-        if not first:
-            break
-        last = input("Enter your last name: ")
-        age = int(input("Enter your age: "))
-        height = int(input("Enter your height in inches: "))
-        weight = int(input("Enter your weight in lbs: "))
-        user = BodyMassIndex(first, last, age, height, weight)
-        print(user.get_report())
+    interactive_test()
